@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Digital Clock</title>
+    <style>
+        /* Basic reset for better consistency */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Body styling: full height, center content, responsive background */
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            transition: background-color 0.5s ease; /* Smooth transition for AM/PM change */
+        }
+
+        /* AM mode: light background */
+        body.am {
+            background: linear-gradient(135deg, #87CEEB, #FFFACD); /* Light blue to yellow */
+        }
+
+        /* PM mode: dark background */
+        body.pm {
+            background: linear-gradient(135deg, #2C3E50, #34495E); /* Dark blue gradient */
+            color: #ECF0F1; /* Light text for contrast */
+        }
+
+        /* Clock container: centered, large font, responsive */
+        #clock {
+            font-size: 4rem; /* Large for visibility */
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            transition: color 0.5s ease; /* Smooth color change */
+        }
+
+        /* AM text color */
+        body.am #clock {
+            color: #2C3E50; /* Dark text */
+        }
+
+        /* PM text color */
+        body.pm #clock {
+            color: #ECF0F1; /* Light text */
+        }
+
+        /* Responsive design: smaller font on small screens */
+        @media (max-width: 600px) {
+            #clock {
+                font-size: 2.5rem;
+            }
+        }
+    </style>
+</head>
+<body id="body">
+    <!-- Clock display element -->
+    <div id="clock">--:--:--</div>
+
+    <script>
+        // Function to update the clock display
+        function updateClock() {
+            // Get the current date and time
+            const now = new Date();
+
+            // Extract hours, minutes, and seconds
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+
+            // Determine AM or PM
+            const isAM = hours < 12;
+            const period = isAM ? 'AM' : 'PM';
+
+            // Convert to 12-hour format if desired, but keep 24-hour for HH:MM:SS
+            // For HH:MM:SS, we use 24-hour format as per requirement
+
+            // Format to two digits (e.g., 09 instead of 9)
+            hours = hours.toString().padStart(2, '0');
+            minutes = minutes.toString().padStart(2, '0');
+            seconds = seconds.toString().padStart(2, '0');
+
+            // Combine into HH:MM:SS format
+            const timeString = ${hours}:${minutes}:${seconds};
+
+            // Update the clock display
+            document.getElementById('clock').textContent = timeString;
+
+            // Change body class for AM/PM styling
+            const body = document.getElementById('body');
+            if (isAM) {
+                body.className = 'am';
+            } else {
+                body.className = 'pm';
+            }
+        }
+
+        // Update the clock immediately on load
+        updateClock();
+
+        // Set interval to update every second (1000 milliseconds)
+        setInterval(updateClock, 1000);
+    </script>
+</body>
+</html>
