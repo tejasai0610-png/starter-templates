@@ -1,0 +1,185 @@
+<!-- This is the main HTML structure for the To-Do List app -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <style>
+        /* Basic styling for the body */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        /* Container to center the content */
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        /* Styling for the heading */
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        /* Flexbox for input and button */
+        .input-section {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        /* Styling for the input box */
+        #task-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        /* Styling for the add button */
+        #add-btn {
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-left: 10px;
+        }
+        #add-btn:hover {
+            background: #45a049;
+        }
+        /* Remove default list styling */
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        /* Styling for each list item */
+        li {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        /* Styling for the task text */
+        .task-text {
+            flex: 1;
+            margin-left: 10px;
+        }
+        /* Styling for completed tasks */
+        .completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+        /* Styling for the delete button */
+        .delete-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+        .delete-btn:hover {
+            background: #da190b;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main container for the app -->
+    <div class="container">
+        <h1>To-Do List</h1>
+        <!-- Section for input and add button -->
+        <div class="input-section">
+            <input type="text" id="task-input" placeholder="Enter a new task">
+            <button id="add-btn">Add Task</button>
+        </div>
+        <!-- Unordered list to display tasks -->
+        <ul id="task-list"></ul>
+    </div>
+    <script>
+        // Get references to HTML elements
+        const taskInput = document.getElementById('task-input');
+        const addBtn = document.getElementById('add-btn');
+        const taskList = document.getElementById('task-list');
+
+        // Load tasks from localStorage or initialize empty array
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+
+        // Function to render all tasks in the list
+        function renderTasks() {
+            taskList.innerHTML = ''; // Clear the list
+            tasks.forEach((task, index) => {
+                // Create list item
+                const li = document.createElement('li');
+                // Create checkbox for marking complete
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.checked = task.completed;
+                checkbox.addEventListener('change', () => toggleComplete(index));
+                // Create span for task text
+                const text = document.createElement('span');
+                text.className = 'task-text';
+                if (task.completed) text.classList.add('completed');
+                text.textContent = task.text;
+                // Create delete button
+                const deleteBtn = document.createElement('button');
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.textContent = 'Delete';
+                deleteBtn.addEventListener('click', () => deleteTask(index));
+                // Append elements to list item
+                li.appendChild(checkbox);
+                li.appendChild(text);
+                li.appendChild(deleteBtn);
+                // Append list item to task list
+                taskList.appendChild(li);
+            });
+        }
+
+        // Function to add a new task
+        function addTask() {
+            const text = taskInput.value.trim();
+            if (text) {
+                tasks.push({ text, completed: false });
+                taskInput.value = '';
+                saveTasks();
+                renderTasks();
+            }
+        }
+
+        // Function to toggle task completion
+        function toggleComplete(index) {
+            tasks[index].completed = !tasks[index].completed;
+            saveTasks();
+            renderTasks();
+        }
+
+        // Function to delete a task
+        function deleteTask(index) {
+            tasks.splice(index, 1);
+            saveTasks();
+            renderTasks();
+        }
+
+        // Function to save tasks to localStorage
+        function saveTasks() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+
+        // Event listener for add button
+        addBtn.addEventListener('click', addTask);
+        // Event listener for Enter key in input
+        taskInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') addTask();
+        });
+
+        // Initial render of tasks
+        renderTasks();
+    </script>
+</body>
+</html>
